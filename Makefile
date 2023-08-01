@@ -1,4 +1,4 @@
-PYTHON = PYTHON
+PYTHON = python
 MPIEXEC = mpiexec
 
 ROOTDIR=$(realpath $(dir $(firstword $(MAKEFILE_LIST))))
