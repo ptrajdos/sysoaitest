@@ -6,7 +6,7 @@ CODEDIR=${ROOTDIR}/code
 
 .PHONY: all
 
-all: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib pyopenclimage spark tqdm
+all: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib pyopenclimage spark tqdm skimage opencv
 
 numpy:
 	${PYTHON} ${CODEDIR}/numpyT.py
@@ -42,3 +42,9 @@ spark:
 
 tqdm: 
 	${PYTHON} ${CODEDIR}/tqdmT.py
+
+skimage: 
+	${PYTHON} ${CODEDIR}/skimageT.py
+
+opencv: 
+	cd ${CODEDIR} && ${PYTHON} ./opencvT.py
