@@ -21,6 +21,7 @@ Wymagania (pozostałe):
   + libpocl2
   + ocl-icd-opencl-dev
   + oclgrind
+  + Odpowiednie sterowniki dla karty graficznej. Powinny działać z OpenCL i Keras.
 
 ## Uruchomienie
 
