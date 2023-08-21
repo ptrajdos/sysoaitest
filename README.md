@@ -24,7 +24,7 @@ Wymagania (pozostałe):
 
 ## Uruchomienie
 
-Uruchomienie testów następuje poprzez wpisania w terminalu
+Uruchomienie testów następuje poprzez wpisanie w terminalu
 ```
 make
 ```
