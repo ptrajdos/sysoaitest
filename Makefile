@@ -48,3 +48,6 @@ skimage:
 
 opencv: 
 	cd ${CODEDIR} && ${PYTHON} ./opencvT.py
+
+tensorflow: 
+	${PYTHON} ${CODEDIR}/tensorflowT.py
