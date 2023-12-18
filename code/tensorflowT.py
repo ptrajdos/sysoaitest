@@ -1,3 +1,5 @@
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context # na problemy z ssl
 from keras import layers
 from keras.engine.sequential import Sequential
 from tensorflow.keras.datasets.fashion_mnist import load_data
