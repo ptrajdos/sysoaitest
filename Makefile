@@ -66,5 +66,6 @@ $(ASDF_DIR): git
 	echo '. "$$HOME/.asdf/completions/asdf.bash"' >>${HOME}/.bashrc; \
 
 asdf_plugins: $(ASDF_DIR)
-	asdf plugin-add python;\
+	source ${HOME}/.bashrc ;\
+	asdf plugin-add python ;\
 	asdf plugin-add java
