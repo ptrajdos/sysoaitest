@@ -51,3 +51,4 @@ clinfo
 libpocl2
 ocl-icd-opencl-dev
 oclgrind
+moreutils
