@@ -15,7 +15,7 @@ all: install tests
 
 tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib pyopenclimage spark tqdm skimage opencv
 
-install: asdf_install_python
+install: asdf_install_python python_install_packages
 
 
 numpy:
