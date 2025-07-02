@@ -9,6 +9,7 @@ Wymagane pakiety pythona: _requirements\_general.txt_. Jest to lista pakietów w
 
 Wymagania (pozostałe):
 + Odpowiednie sterowniki dla karty graficznej. Powinny działać z OpenCL i Keras. To niestety trzeba dodać manualnie, gdy znamy hardware.
++ Jakieś IDE do pythona. Proponuję VSCode z odpowiednimi wtyczkami
 
 ## Uruchomienie
 

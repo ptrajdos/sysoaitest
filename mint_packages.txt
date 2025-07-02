@@ -52,3 +52,6 @@ libpocl2
 ocl-icd-opencl-dev
 oclgrind
 moreutils
+shellcheck
+gedit
+geany
