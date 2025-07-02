@@ -4,6 +4,7 @@ MPIEXEC = mpiexec
 ROOTDIR=$(realpath $(dir $(firstword $(MAKEFILE_LIST))))
 CODEDIR=${ROOTDIR}/code
 ASDF_DIR := $(HOME)/.asdf
+PACKAGES_FILE=${ROOTDIR}/mint_packages.txt
 
 .PHONY: all
 
@@ -60,7 +61,7 @@ tensorflow:
 git:
 	apt install -y git
 
-$(ASDF_DIR): git
+$(ASDF_DIR): install_packages
 	git clone https://github.com/asdf-vm/asdf.git ${ASDF_DIR} --branch v0.14.1;\
 	echo '. "$$HOME/.asdf/asdf.sh"' >>${HOME}/.bashrc;\
 	echo '. "$$HOME/.asdf/completions/asdf.bash"' >>${HOME}/.bashrc; \
@@ -69,3 +70,7 @@ asdf_plugins: $(ASDF_DIR)
 	source ${HOME}/.bashrc ;\
 	asdf plugin-add python ;\
 	asdf plugin-add java
+
+install_packages:
+	sudo xargs -a ${PACKAGES_FILE} apt install -y
+

@@ -5,7 +5,6 @@ wget
 mc
 gpg
 git
-linx
 lynx
 nmap
 tshark
@@ -47,7 +46,7 @@ libatlas-base-dev
 libffi-dev
 openjdk-17-jdk
 scala
-mipch
+mpich
 clinfo
 libpocl2
 ocl-icd-opencl-dev
