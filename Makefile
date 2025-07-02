@@ -3,11 +3,12 @@ MPIEXEC = mpiexec
 
 ROOTDIR=$(realpath $(dir $(firstword $(MAKEFILE_LIST))))
 CODEDIR=${ROOTDIR}/code
-ASDF_DIR := $(HOME)/.asdf
+ASDF_DIR= $(HOME)/.asdf
 PACKAGES_FILE=${ROOTDIR}/mint_packages.txt
 ASDF=asdf
 PYTHON=python
 PIP=pip
+ASDF_BIN := $(ASDF_DIR)/bin/asdf
 .PHONY: all
 
 all: install tests
@@ -65,21 +66,25 @@ git:
 	apt install -y git
 
 $(ASDF_DIR): install_packages
-	git clone https://github.com/asdf-vm/asdf.git ${ASDF_DIR} --branch v0.14.1;\
-	echo '. "$$HOME/.asdf/asdf.sh"' >>${HOME}/.bashrc;\
-	echo '. "$$HOME/.asdf/completions/asdf.bash"' >>${HOME}/.bashrc; \
+	@if [ ! -d "$(ASDF_DIR)" ]; then \
+		echo "Cloning asdf..."; \
+		git clone https://github.com/asdf-vm/asdf.git ${ASDF_DIR} --branch v0.14.1;\
+		echo '. "$$HOME/.asdf/asdf.sh"' >>${HOME}/.bashrc;\
+		echo '. "$$HOME/.asdf/completions/asdf.bash"' >>${HOME}/.bashrc; \
+	else \
+			echo "asdf already installed at $(ASDF_DIR)"; \
+	fi
+	
 
 asdf_plugins: $(ASDF_DIR)
-	source ${HOME}/.bashrc ;\
-	asdf plugin-add python ;\
-	asdf plugin-add java
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN) plugin add python || true'
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN) plugin add java || true'
 
 install_packages:
 	sudo xargs -a ${PACKAGES_FILE} apt install -y
 
 asdf_install_python: asdf_plugins
-	source ${HOME}/.bashrc ;\
-	$(ASDF) install python 3.11.9 ;\
-	$(ASDF) global python 3.11.9 ;\
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  install python 3.11.9 || true'
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  global python 3.11.9 || true'
 	$(PYTHON) -m $(PIP) install --upgrade pip ;\
 	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install.log ;\
