@@ -5,7 +5,9 @@ ROOTDIR=$(realpath $(dir $(firstword $(MAKEFILE_LIST))))
 CODEDIR=${ROOTDIR}/code
 ASDF_DIR := $(HOME)/.asdf
 PACKAGES_FILE=${ROOTDIR}/mint_packages.txt
-
+ASDF=asdf
+PYTHON=python
+PIP=pip
 .PHONY: all
 
 all: tests
@@ -74,3 +76,9 @@ asdf_plugins: $(ASDF_DIR)
 install_packages:
 	sudo xargs -a ${PACKAGES_FILE} apt install -y
 
+asdf_install_python: asdf_plugins
+	source ${HOME}/.bashrc ;\
+	$(ASDF) install python 3.11.9 ;\
+	$(ASDF) global python 3.11.9 ;\
+	$(PYTHON) -m $(PIP) install --upgrade pip ;\
+	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install.log ;\
