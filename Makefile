@@ -10,10 +10,11 @@ PYTHON=python
 PIP=pip
 .PHONY: all
 
-all: tests
+all: install tests
 
 tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib pyopenclimage spark tqdm skimage opencv
 
+install: asdf_install_python
 
 
 numpy:
