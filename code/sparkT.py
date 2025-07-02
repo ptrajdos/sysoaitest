@@ -10,6 +10,7 @@ def init_session():
 
 if __name__ == '__main__':
 	session = init_session()
+	print("Session:",session)
 	data_frame = session.range(2000).toDF("column1")
 	print("Data Frame:\n",data_frame)
 	data_frame.show(n=3)

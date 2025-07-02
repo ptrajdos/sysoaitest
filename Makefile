@@ -19,48 +19,48 @@ install: asdf_install_python
 
 
 numpy:
-	${PYTHON} ${CODEDIR}/numpyT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/numpyT.py"
 sklearn: 
-	${PYTHON} ${CODEDIR}/sklearnT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/sklearnT.py"
 
 matplotlib: 
-	${PYTHON} ${CODEDIR}/matplotlibT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/matplotlibT.py"
 
 keras: 
-	${PYTHON} ${CODEDIR}/kerasT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/kerasT.py"
 
 cython: 
-	cd ${CODEDIR} && ${PYTHON} ./cythonSumT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && cd ${CODEDIR} && ${PYTHON} ./cythonSumT.py"
 
 pyopencl: 
-	${PYTHON} ${CODEDIR}/pyopenclT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/pyopenclT.py"
 
 mpi: 
-	${MPIEXEC}	${PYTHON} ${CODEDIR}/mpiT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${MPIEXEC}	${PYTHON} ${CODEDIR}/mpiT.py"
 
 threads: 
-	${PYTHON} ${CODEDIR}/threadsT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/threadsT.py"
 
 joblib: 
-	${PYTHON} ${CODEDIR}/threadsT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/threadsT.py"
 
 pyopenclimage: 
-	cd ${CODEDIR} && ${PYTHON} ./imageFillIntT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && cd ${CODEDIR} && ${PYTHON} ./imageFillIntT.py "
 
 spark: 
-	${PYTHON} ${CODEDIR}/sparkT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/sparkT.py"
 
 tqdm: 
-	${PYTHON} ${CODEDIR}/tqdmT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/tqdmT.py"
 
 skimage: 
-	${PYTHON} ${CODEDIR}/skimageT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/skimageT.py"
 
 opencv: 
-	cd ${CODEDIR} && ${PYTHON} ./opencvT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && cd ${CODEDIR} && ${PYTHON} ./opencvT.py"
 
 tensorflow: 
-	${PYTHON} ${CODEDIR}/tensorflowT.py
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/tensorflowT.py"
 
 git:
 	apt install -y git
@@ -86,5 +86,7 @@ install_packages:
 asdf_install_python: asdf_plugins
 	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  install python 3.11.9 || true'
 	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  global python 3.11.9 || true'
-	$(PYTHON) -m $(PIP) install --upgrade pip ;\
-	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install.log ;\
+
+python_install_packages: asdf_install_python
+	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install --upgrade pip "
+	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install.log "
