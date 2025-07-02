@@ -1,31 +1,18 @@
 # sysoaitest
 
-Skrypt do testowania oprogramowania potrzebnego w czasie laboratoriów związanych z kursem __Systemy Obliczeniowe__.
-
-Jest to prosty *Makefile*, który uruchamia skrypty w pythonie. Każdy ze skryptów pythona testuje wybrane pakiety tego języka
+Skrypt do instalacji i testowania oprogramowania potrzebnego w czasie laboratoriów związanych z kursem __Systemy Obliczeniowe__.
+Jest to Makefile, który zainstaluje odpowiednie pakiety przez __apt__, zainstaluje __asdf__, odpowiednią wersję pythona i dla niej zainstaluje odpowiednie wersje pakietów.
 
 ## Wymagania
 
-Wymagane pakiety pythona: requirements.txt. Jest to lista pakietów wraz z wersjami, które ostatnio działały. W razie potrzeby można je uaktualnić.
+Wymagane pakiety pythona: _requirements\_general.txt_. Jest to lista pakietów wraz z wersjami, które ostatnio działały. W razie potrzeby można je uaktualnić. Dla MintLinux zostaną zainstalowane pakiety zapisane w pliku _mint\_packages.txt_
 
 Wymagania (pozostałe):
-
-+ Python 3.9.X (Powoli wychodzi z użycia, można przejść na 3.10.X lub nowszy)
-+ Mpich
-+ Java JDK (co najmniej 11.0)
-+ scala
-+ spark
-+ kompilator c i c++
-+ LLVM
-+ clinfo
-+ libpocl2
-+ ocl-icd-opencl-dev
-+ oclgrind
-+ Odpowiednie sterowniki dla karty graficznej. Powinny działać z OpenCL i Keras.
++ Odpowiednie sterowniki dla karty graficznej. Powinny działać z OpenCL i Keras. To niestety trzeba dodać manualnie, gdy znamy hardware.
 
 ## Uruchomienie
 
-Uruchomienie testów następuje poprzez wpisanie w terminalu
+Uruchomienie instalacji i testów następuje poprzez wpisanie w terminalu
 
 ```
 make
