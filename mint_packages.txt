@@ -55,3 +55,6 @@ moreutils
 shellcheck
 gedit
 geany
+lolcat
+cowsay
+neofetch
