@@ -3,10 +3,15 @@ MPIEXEC = mpiexec
 
 ROOTDIR=$(realpath $(dir $(firstword $(MAKEFILE_LIST))))
 CODEDIR=${ROOTDIR}/code
+ASDF_DIR := $(HOME)/.asdf
 
 .PHONY: all
 
-all: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib pyopenclimage spark tqdm skimage opencv
+all: tests
+
+tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib pyopenclimage spark tqdm skimage opencv
+
+
 
 numpy:
 	${PYTHON} ${CODEDIR}/numpyT.py
@@ -51,3 +56,15 @@ opencv:
 
 tensorflow: 
 	${PYTHON} ${CODEDIR}/tensorflowT.py
+
+git:
+	apt install -y git
+
+$(ASDF_DIR): git
+	git clone https://github.com/asdf-vm/asdf.git ${ASDF_DIR} --branch v0.14.1;\
+	echo '. "$$HOME/.asdf/asdf.sh"' >>${HOME}/.bashrc;\
+	echo '. "$$HOME/.asdf/completions/asdf.bash"' >>${HOME}/.bashrc; \
+
+asdf_plugins: $(ASDF_DIR)
+	asdf plugin-add python;\
+	asdf plugin-add java
