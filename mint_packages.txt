@@ -7,7 +7,6 @@ gpg
 git
 lynx
 nmap
-tshark
 vim
 nano
 htop
