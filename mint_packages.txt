@@ -5,6 +5,7 @@ wget
 mc
 gpg
 git
+tig
 lynx
 nmap
 vim
