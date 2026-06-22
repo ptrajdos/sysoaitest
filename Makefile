@@ -99,4 +99,4 @@ python_install_standalone:
 
 python_install_standalone2:
 	$(PYTHON) -m $(PIP) install --upgrade pip
-	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_standalone.txt --log ${ROOTDIR}/pip_install_standalone.log
+	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_generals.txt --log ${ROOTDIR}/pip_install_standalone.log
