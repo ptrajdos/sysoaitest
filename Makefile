@@ -9,13 +9,19 @@ ASDF=asdf
 PYTHON=python
 PIP=pip
 ASDF_BIN := $(ASDF_DIR)/bin/asdf
+
+CLGRIND_REPO := https://github.com/jrprice/Oclgrind.git
+OCLGRIND_DIR := Oclgrind
+LLVM_ROOT := /usr/lib/llvm-21
+
+
 .PHONY: all
 
 all: install tests
 
 tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib pyopenclimage spark tqdm skimage opencv
 
-install: asdf_install_python python_install_packages
+install: asdf_install_python python_install_packages oclgrind
 
 
 numpy:
@@ -42,7 +48,7 @@ threads:
 	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/threadsT.py"
 
 joblib: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/threadsT.py"
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/joblibT.py"
 
 pyopenclimage: 
 	bash -c ". $(ASDF_DIR)/asdf.sh && cd ${CODEDIR} && ${PYTHON} ./imageFillIntT.py "
@@ -99,4 +105,17 @@ python_install_standalone:
 
 python_install_standalone2:
 	$(PYTHON) -m $(PIP) install --upgrade pip
-	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_generals.txt --log ${ROOTDIR}/pip_install_standalone.log
+	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install_standalone.log
+
+oclgrind: install_packages
+	@if [ ! -d "$(OCLGRIND_DIR)" ]; then \
+		git clone $(OCLGRIND_REPO); \
+	fi
+	mkdir -p $(OCLGRIND_DIR)/build
+	cd $(OCLGRIND_DIR)/build && \
+	cmake .. \
+		-DLLVM_DIR=$(LLVM_ROOT)/cmake \
+		-DCLANG_ROOT=$(LLVM_ROOT)
+	$(MAKE) -C $(OCLGRIND_DIR)/build -j $(shell nproc)
+	$(MAKE) -C $(OCLGRIND_DIR)/build test
+	sudo $(MAKE) -C $(OCLGRIND_DIR)/build install

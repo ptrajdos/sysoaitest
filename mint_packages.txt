@@ -58,3 +58,7 @@ geany
 lolcat
 cowsay
 neofetch
+clang
+libclang-21-dev
+libpolly-22-dev
+libpolly-21-dev
