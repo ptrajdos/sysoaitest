@@ -22,9 +22,9 @@ CXX=clang++-${CLANG_VERSION}
 
 all: install tests
 
-tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib pyopenclimage spark tqdm skimage opencv
+tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib ray dask  pyopenclimage spark tqdm skimage opencv torch jax
 
-install: asdf_install_python python_install_packages oclgrind
+install: asdf_install_python python_install_packages oclgrind-icd
 
 
 numpy:
@@ -43,6 +43,7 @@ cython:
 
 pyopencl: 
 	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/pyopenclT.py"
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/pyopencl2T.py"
 
 mpi: 
 	bash -c ". $(ASDF_DIR)/asdf.sh && ${MPIEXEC}	${PYTHON} ${CODEDIR}/mpiT.py"
@@ -52,6 +53,15 @@ threads:
 
 joblib: 
 	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/joblibT.py"
+
+ray: 
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/rayT.py"
+
+dask: 
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/daskT.py"
+
+torch: 
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/torchT.py"
 
 pyopenclimage: 
 	bash -c ". $(ASDF_DIR)/asdf.sh && cd ${CODEDIR} && ${PYTHON} ./imageFillIntT.py "
@@ -70,6 +80,10 @@ opencv:
 
 tensorflow: 
 	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/tensorflowT.py"
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/tensorflow2T.py"
+
+jax: 
+	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/jaxT.py"
 
 git:
 	apt install -y git
@@ -95,8 +109,9 @@ install_packages:
 	sudo xargs -a ${PACKAGES_FILE} apt install -y
 
 asdf_install_python: asdf_plugins
-	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  install python 3.11.9 || true'
-	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  global python 3.11.9 || true'
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  install python 3.13.14 || true'
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  install python 3.13.14t || true'
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  global python 3.13.14 || true'
 
 python_install_packages: asdf_install_python
 	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install --upgrade pip "
@@ -111,19 +126,34 @@ python_install_standalone2:
 	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install_standalone.log
 
 oclgrind: install_packages
-	@if [ ! -d "$(OCLGRIND_DIR)" ]; then \
-		git clone $(OCLGRIND_REPO); \
+	@if command -v oclgrind >/dev/null 2>&1; then \
+		echo "Oclgrind already installed."; \
+	else \
+		if [ ! -d "$(OCLGRIND_DIR)" ]; then \
+			git clone $(OCLGRIND_REPO); \
+		fi; \
+		cd $(OCLGRIND_DIR) && \
+		if ! grep -q "exepath\[len\] = '\\0';" src/runtime/oclgrind.cpp; then \
+			patch -p1 < ../oclgrind_readlink_fix.patch; \
+		fi; \
+		mkdir -p $(OCLGRIND_DIR)/build; \
+		cd $(OCLGRIND_DIR)/build && \
+		CC=${CC} CXX=${CXX} cmake .. \
+			-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+			-DLLVM_DIR=$(LLVM_ROOT)/cmake \
+			-DCLANG_ROOT=$(CLANG_ROOT); \
+		$(MAKE) VERBOSE=1 -C $(OCLGRIND_DIR)/build -j$(shell nproc); \
+		$(MAKE) -C $(OCLGRIND_DIR)/build test; \
+		sudo $(MAKE) -C $(OCLGRIND_DIR)/build install; \
 	fi
-	cd Oclgrind && \
-	if ! grep -q "exepath\[len\] = '\\0';" src/runtime/oclgrind.cpp; then \
-		patch -p1 < ../oclgrind_readlink_fix.patch; \
-	fi
-	mkdir -p $(OCLGRIND_DIR)/build
-	cd $(OCLGRIND_DIR)/build && \
-	CC=${CC} CXX=${CXX} cmake .. \
-		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DLLVM_DIR=$(LLVM_ROOT)/cmake \
-		-DCLANG_ROOT=$(CLANG_ROOT)
-	$(MAKE) VERBOSE=1 -C $(OCLGRIND_DIR)/build -j $(shell nproc)
-	$(MAKE) -C $(OCLGRIND_DIR)/build test
-	sudo $(MAKE)  -C $(OCLGRIND_DIR)/build install
+
+oclgrind-icd: oclgrind
+	@OCLGRIND_RT=$$(ldconfig -p 2>/dev/null | awk '/liboclgrind-rt-icd\.so/{print $$NF; exit}'); \
+	if [ -z "$$OCLGRIND_RT" ]; then \
+		echo "Error: liboclgrind-rt-icd.so not found after Oclgrind installation."; \
+		exit 1; \
+	fi; \
+	echo "Using Oclgrind ICD runtime: $$OCLGRIND_RT"; \
+	sudo mkdir -p /etc/OpenCL/vendors; \
+	echo "$$OCLGRIND_RT" | sudo tee /etc/OpenCL/vendors/oclgrind.icd >/dev/null; \
+	echo "Installed /etc/OpenCL/vendors/oclgrind.icd"
