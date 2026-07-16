@@ -50,6 +50,9 @@ mpich
 clinfo
 libpocl2
 ocl-icd-opencl-dev
+liboclgrind-21.10
+liboclgrind-21.10t64
+liboclgrind-dev
 oclgrind
 moreutils
 shellcheck
