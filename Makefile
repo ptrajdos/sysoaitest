@@ -106,9 +106,11 @@ asdf_plugins: $(ASDF_DIR)
 	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN) plugin add python || true'
 	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN) plugin add java || true'
 
-install_packages:
+update_packages:
 	sudo apt update
 	sudo apt upgrade -y
+
+install_packages: update_packages
 	sudo xargs -a ${PACKAGES_FILE} apt install -y
 
 asdf_install_python: asdf_plugins
