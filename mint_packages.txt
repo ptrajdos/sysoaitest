@@ -78,3 +78,4 @@ libedit-dev
 libcurl4-openssl-dev
 kate 
 geany
+btop
