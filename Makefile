@@ -36,7 +36,7 @@ all: install tests
 
 tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib ray dask pyopenclimage spark tqdm skimage opencv torch jax
 
-install: asdf_install_python python_install_packages oclgrind-icd
+install: asdf_install_python python_install_packages oclgrind-icd vscodium
 
 numpy:
 	$(VENV_PYTHON) $(CODEDIR)/numpyT.py
