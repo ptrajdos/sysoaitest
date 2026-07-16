@@ -73,3 +73,5 @@ gcc-14
 g++-14
 libedit-dev
 libcurl4-openssl-dev
+kate 
+geany

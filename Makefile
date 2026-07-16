@@ -18,6 +18,9 @@ CLANG_ROOT := "/usr/lib/clang/${CLANG_VERSION}"
 CC=clang-${CLANG_VERSION}
 CXX=clang++-${CLANG_VERSION}
 
+VSCODIUM_KEY=/usr/share/keyrings/vscodium.gpg
+VSCODIUM_REPO=/etc/apt/sources.list.d/vscodium.list
+
 .PHONY: all
 
 all: install tests
@@ -157,3 +160,22 @@ oclgrind-icd: oclgrind
 	sudo mkdir -p /etc/OpenCL/vendors; \
 	echo "$$OCLGRIND_RT" | sudo tee /etc/OpenCL/vendors/oclgrind.icd >/dev/null; \
 	echo "Installed /etc/OpenCL/vendors/oclgrind.icd"
+
+vscodium:
+	@if ! command -v codium >/dev/null 2>&1; then \
+		echo "Installing VSCodium..."; \
+		sudo apt update; \
+		sudo apt install -y curl gpg; \
+		if [ ! -f $(VSCODIUM_KEY) ]; then \
+			curl -fsSL https://repo.vscodium.dev/vscodium.gpg \
+			| gpg --dearmor \
+			| sudo tee $(VSCODIUM_KEY) > /dev/null; \
+		fi; \
+		if [ ! -f $(VSCODIUM_REPO) ]; then \
+			sudo curl --output-dir /etc/apt/sources.list.d -LO https://repo.vscodium.dev/vscodium.list; \
+		fi; \
+		sudo apt update; \
+		sudo apt install -y codium; \
+	else \
+		echo "VSCodium already installed."; \
+	fi
