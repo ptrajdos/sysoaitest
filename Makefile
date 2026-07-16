@@ -174,9 +174,10 @@ oclgrind-icd: oclgrind
 	@if [ -f /etc/OpenCL/vendors/oclgrind.icd ]; then \
 		echo "Oclgrind ICD already installed at /etc/OpenCL/vendors/oclgrind.icd"; \
 	else \
-		OCLGRIND_RT=$$(ldconfig -p 2>/dev/null | awk '/liboclgrind-rt-icd\.so/{print $$NF; exit}'); \
+		OCLGRIND_RT=$$(find /usr /usr/local $$(pwd)/Oclgrind \
+			-name "liboclgrind-rt-icd.so*" 2>/dev/null | head -1); \
 		if [ -z "$$OCLGRIND_RT" ]; then \
-			echo "Error: liboclgrind-rt-icd.so not found after Oclgrind installation."; \
+			echo "Error: liboclgrind-rt-icd.so not found."; \
 			exit 1; \
 		fi; \
 		echo "Using Oclgrind ICD runtime: $$OCLGRIND_RT"; \
