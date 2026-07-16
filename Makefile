@@ -170,15 +170,19 @@ oclgrind: install_packages
 	fi
 
 oclgrind-icd: oclgrind
-	@OCLGRIND_RT=$$(ldconfig -p 2>/dev/null | awk '/liboclgrind-rt-icd\.so/{print $$NF; exit}'); \
-	if [ -z "$$OCLGRIND_RT" ]; then \
-		echo "Error: liboclgrind-rt-icd.so not found after Oclgrind installation."; \
-		exit 1; \
-	fi; \
-	echo "Using Oclgrind ICD runtime: $$OCLGRIND_RT"; \
-	sudo mkdir -p /etc/OpenCL/vendors; \
-	echo "$$OCLGRIND_RT" | sudo tee /etc/OpenCL/vendors/oclgrind.icd >/dev/null; \
-	echo "Installed /etc/OpenCL/vendors/oclgrind.icd"
+	@if [ -f /etc/OpenCL/vendors/oclgrind.icd ]; then \
+		echo "Oclgrind ICD already installed at /etc/OpenCL/vendors/oclgrind.icd"; \
+	else \
+		OCLGRIND_RT=$$(ldconfig -p 2>/dev/null | awk '/liboclgrind-rt-icd\.so/{print $$NF; exit}'); \
+		if [ -z "$$OCLGRIND_RT" ]; then \
+			echo "Error: liboclgrind-rt-icd.so not found after Oclgrind installation."; \
+			exit 1; \
+		fi; \
+		echo "Using Oclgrind ICD runtime: $$OCLGRIND_RT"; \
+		sudo mkdir -p /etc/OpenCL/vendors; \
+		echo "$$OCLGRIND_RT" | sudo tee /etc/OpenCL/vendors/oclgrind.icd >/dev/null; \
+		echo "Installed /etc/OpenCL/vendors/oclgrind.icd"; \
+	fi
 
 vscodium:
 	@if ! command -v codium >/dev/null 2>&1; then \
