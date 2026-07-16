@@ -1,108 +1,113 @@
-PYTHON = python
-MPIEXEC = mpiexec
+MPIEXEC := mpiexec
 
-ROOTDIR=$(realpath $(dir $(firstword $(MAKEFILE_LIST))))
-CODEDIR=${ROOTDIR}/code
-ASDF_DIR= $(HOME)/.asdf
-PACKAGES_FILE=${ROOTDIR}/mint_packages.txt
-ASDF=asdf
-PYTHON=python
-PIP=pip
+ROOTDIR := $(realpath $(dir $(firstword $(MAKEFILE_LIST))))
+CODEDIR := $(ROOTDIR)/code
+ASDF_DIR := $(HOME)/.asdf
 ASDF_BIN := $(ASDF_DIR)/bin/asdf
-VENV_NAME=sysoai_venv
-VENV_DIR=${HOME}/${VENV_NAME}
-VENV_PYTHON=${VENV_DIR}/bin/python
-VENV_PIP=${VENV_DIR}/bin/pip
+PACKAGES_FILE := $(ROOTDIR)/mint_packages.txt
+PYTHON := python
+PIP := pip
+
+VENV_NAME := sysoai_venv
+VENV_DIR := $(HOME)/$(VENV_NAME)
+VENV_PYTHON := $(VENV_DIR)/bin/python
+VENV_PIP := $(VENV_DIR)/bin/pip
 
 OCLGRIND_REPO := https://github.com/jrprice/Oclgrind.git
 OCLGRIND_DIR := Oclgrind
-CLANG_VERSION=20
-LLVM_ROOT := /usr/lib/llvm-${CLANG_VERSION}
-CLANG_ROOT := "/usr/lib/clang/${CLANG_VERSION}"
-CC=clang-${CLANG_VERSION}
-CXX=clang++-${CLANG_VERSION}
+CLANG_VERSION := 20
+LLVM_ROOT := /usr/lib/llvm-$(CLANG_VERSION)
+CLANG_ROOT := /usr/lib/clang/$(CLANG_VERSION)
+CC := clang-$(CLANG_VERSION)
+CXX := clang++-$(CLANG_VERSION)
 
-VSCODIUM_KEY=/usr/share/keyrings/vscodium.gpg
-VSCODIUM_REPO=/etc/apt/sources.list.d/vscodium.list
+VSCODIUM_KEY := /usr/share/keyrings/vscodium.gpg
+VSCODIUM_REPO := /etc/apt/sources.list.d/vscodium.list
 
-.PHONY: all
+.PHONY: all install tests \
+	numpy sklearn matplotlib keras cython pyopencl mpi threads joblib ray dask \
+	torch pyopenclimage spark tqdm skimage opencv tensorflow jax \
+	git asdf_plugins update_packages install_packages \
+	asdf_install_python create_venv python_install_packages \
+	python_install_standalone python_install_standalone2 \
+	oclgrind oclgrind-icd vscodium
 
 all: install tests
 
-tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib ray dask  pyopenclimage spark tqdm skimage opencv torch jax
+tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib ray dask pyopenclimage spark tqdm skimage opencv torch jax
 
 install: asdf_install_python python_install_packages oclgrind-icd
 
-
 numpy:
-	${VENV_PYTHON} ${CODEDIR}/numpyT.py
-sklearn: 
-	${VENV_PYTHON} ${CODEDIR}/sklearnT.py
+	$(VENV_PYTHON) $(CODEDIR)/numpyT.py
 
-matplotlib: 
-	${VENV_PYTHON} ${CODEDIR}/matplotlibT.py
+sklearn:
+	$(VENV_PYTHON) $(CODEDIR)/sklearnT.py
 
-keras: 
-	${VENV_PYTHON} ${CODEDIR}/kerasT.py
+matplotlib:
+	$(VENV_PYTHON) $(CODEDIR)/matplotlibT.py
 
-cython: 
-	cd ${CODEDIR} && ${VENV_PYTHON} ./cythonSumT.py
+keras:
+	$(VENV_PYTHON) $(CODEDIR)/kerasT.py
 
-pyopencl: 
-	${VENV_PYTHON} ${CODEDIR}/pyopenclT.py
-	${VENV_PYTHON} ${CODEDIR}/pyopencl2T.py
+cython:
+	cd $(CODEDIR) && $(VENV_PYTHON) ./cythonSumT.py
 
-mpi: 
-	${MPIEXEC} ${VENV_PYTHON} ${CODEDIR}/mpiT.py
+pyopencl:
+	$(VENV_PYTHON) $(CODEDIR)/pyopenclT.py
+	$(VENV_PYTHON) $(CODEDIR)/pyopencl2T.py
 
-threads: 
-	${VENV_PYTHON} ${CODEDIR}/threadsT.py
+mpi:
+	$(MPIEXEC) $(VENV_PYTHON) $(CODEDIR)/mpiT.py
 
-joblib: 
-	${VENV_PYTHON} ${CODEDIR}/joblibT.py
+threads:
+	$(VENV_PYTHON) $(CODEDIR)/threadsT.py
 
-ray: 
-	${VENV_PYTHON} ${CODEDIR}/rayT.py
+joblib:
+	$(VENV_PYTHON) $(CODEDIR)/joblibT.py
 
-dask: 
-	${VENV_PYTHON} ${CODEDIR}/daskT.py
+ray:
+	$(VENV_PYTHON) $(CODEDIR)/rayT.py
 
-torch: 
-	${VENV_PYTHON} ${CODEDIR}/torchT.py
+dask:
+	$(VENV_PYTHON) $(CODEDIR)/daskT.py
 
-pyopenclimage: 
-	cd ${CODEDIR} && ${VENV_PYTHON} ./imageFillIntT.py
+torch:
+	$(VENV_PYTHON) $(CODEDIR)/torchT.py
 
-spark: 
-	${VENV_PYTHON} ${CODEDIR}/sparkT.py
+pyopenclimage:
+	cd $(CODEDIR) && $(VENV_PYTHON) ./imageFillIntT.py
 
-tqdm: 
-	${VENV_PYTHON} ${CODEDIR}/tqdmT.py
+spark:
+	$(VENV_PYTHON) $(CODEDIR)/sparkT.py
 
-skimage: 
-	${VENV_PYTHON} ${CODEDIR}/skimageT.py
+tqdm:
+	$(VENV_PYTHON) $(CODEDIR)/tqdmT.py
 
-opencv: 
-	cd ${CODEDIR} && ${VENV_PYTHON} ./opencvT.py
+skimage:
+	$(VENV_PYTHON) $(CODEDIR)/skimageT.py
 
-tensorflow: 
-	${VENV_PYTHON} ${CODEDIR}/tensorflowT.py
-	${VENV_PYTHON} ${CODEDIR}/tensorflow2T.py
+opencv:
+	cd $(CODEDIR) && $(VENV_PYTHON) ./opencvT.py
 
-jax: 
-	${VENV_PYTHON} ${CODEDIR}/jaxT.py
+tensorflow:
+	$(VENV_PYTHON) $(CODEDIR)/tensorflowT.py
+	$(VENV_PYTHON) $(CODEDIR)/tensorflow2T.py
+
+jax:
+	$(VENV_PYTHON) $(CODEDIR)/jaxT.py
 
 git:
-	apt install -y git
+	sudo apt install -y git
 
 $(ASDF_DIR): install_packages
 	@if [ ! -d "$(ASDF_DIR)" ]; then \
 		echo "Cloning asdf..."; \
-		git clone https://github.com/asdf-vm/asdf.git ${ASDF_DIR} --branch v0.14.1;\
-		echo '. "$$HOME/.asdf/asdf.sh"' >>${HOME}/.bashrc;\
-		echo '. "$$HOME/.asdf/completions/asdf.bash"' >>${HOME}/.bashrc; \
+		git clone https://github.com/asdf-vm/asdf.git $(ASDF_DIR) --branch v0.14.1; \
+		echo '. "$$HOME/.asdf/asdf.sh"' >> $(HOME)/.bashrc; \
+		echo '. "$$HOME/.asdf/completions/asdf.bash"' >> $(HOME)/.bashrc; \
 	else \
-			echo "asdf already installed at $(ASDF_DIR)"; \
+		echo "asdf already installed at $(ASDF_DIR)"; \
 	fi
 	
 
@@ -115,27 +120,32 @@ update_packages:
 	sudo apt upgrade -y
 
 install_packages: update_packages
-	sudo xargs -a ${PACKAGES_FILE} apt install -y
+	sudo xargs -a $(PACKAGES_FILE) apt install -y
 
 asdf_install_python: asdf_plugins
-	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  install python 3.13.14 || true'
-	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  install python 3.13.14t || true'
-	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  global python 3.13.14 || true'
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN) install python 3.13.14 || true'
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN) install python 3.13.14t || true'
+	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN) global python 3.13.14 || true'
 
 create_venv: asdf_install_python
-	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m venv ${VENV_DIR}"
+	@if [ ! -d "$(VENV_DIR)" ]; then \
+		echo "Creating venv at $(VENV_DIR)..."; \
+		bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m venv $(VENV_DIR)"; \
+	else \
+		echo "Venv already exists at $(VENV_DIR)"; \
+	fi
 
 python_install_packages: create_venv
-	${VENV_PIP} install --upgrade pip
-	${VENV_PIP} install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install.log
+	$(VENV_PIP) install --upgrade pip
+	$(VENV_PIP) install -r $(ROOTDIR)/requirements_general.txt --log $(ROOTDIR)/pip_install.log
 
 python_install_standalone:
-	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install --upgrade pip "
-	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install_standalone.log "
+	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install --upgrade pip"
+	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install -r $(ROOTDIR)/requirements_general.txt --log $(ROOTDIR)/pip_install_standalone.log"
 
 python_install_standalone2:
 	$(PYTHON) -m $(PIP) install --upgrade pip
-	$(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install_standalone.log
+	$(PYTHON) -m $(PIP) install -r $(ROOTDIR)/requirements_general.txt --log $(ROOTDIR)/pip_install_standalone.log
 
 oclgrind: install_packages
 	@if command -v oclgrind >/dev/null 2>&1; then \
@@ -150,11 +160,11 @@ oclgrind: install_packages
 		fi; \
 		mkdir -p $(OCLGRIND_DIR)/build; \
 		cd $(OCLGRIND_DIR)/build && \
-		CC=${CC} CXX=${CXX} cmake .. \
+		CC=$(CC) CXX=$(CXX) cmake .. \
 			-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 			-DLLVM_DIR=$(LLVM_ROOT)/cmake \
 			-DCLANG_ROOT=$(CLANG_ROOT); \
-		$(MAKE) VERBOSE=1 -C $(OCLGRIND_DIR)/build -j$(shell nproc); \
+		$(MAKE) VERBOSE=1 -C $(OCLGRIND_DIR)/build -j$$(nproc); \
 		$(MAKE) -C $(OCLGRIND_DIR)/build test; \
 		sudo $(MAKE) -C $(OCLGRIND_DIR)/build install; \
 	fi
