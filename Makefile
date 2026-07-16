@@ -167,6 +167,7 @@ oclgrind: install_packages
 		$(MAKE) VERBOSE=1 -C $(OCLGRIND_DIR)/build -j$$(nproc); \
 		$(MAKE) -C $(OCLGRIND_DIR)/build test; \
 		sudo $(MAKE) -C $(OCLGRIND_DIR)/build install; \
+		sudo ldconfig; \
 	fi
 
 oclgrind-icd: oclgrind
