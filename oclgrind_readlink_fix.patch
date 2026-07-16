@@ -1,0 +1,29 @@
+--- Oclgrind/src/runtime/oclgrind.cpp.orig	2026-07-16 09:21:20.212222153 -0400
++++ Oclgrind/src/runtime/oclgrind.cpp	2026-07-16 09:26:54.276239994 -0400
+@@ -416,19 +416,23 @@
+     die("getting path to Oclgrind installation");
+   libdir = path;
+ #else
+-  char exepath[PATH_MAX];
+-  char path[PATH_MAX];
++  char exepath[PATH_MAX]= {};
++  char path[PATH_MAX] = {};
+   // Get path to executable
+ #if defined(__APPLE__)
+   uint32_t sz = PATH_MAX;
+   if (_NSGetExecutablePath(exepath, &sz))
+ #else // not apple
+-  if (readlink("/proc/self/exe", exepath, PATH_MAX) == -1)
++  ssize_t len = readlink("/proc/self/exe", exepath, PATH_MAX - 1);
++  if (len == -1)
+ #endif
+   {
+     cerr << "[Oclgrind] Unable to get path to Oclgrind installation" << endl;
+     exit(1);
+   }
++#ifndef __APPLE__
++    exepath[len] = '\0';
++#endif
+   // Resolve symbolic links and normalise path
+   if (realpath(exepath, path) == NULL)
+   {

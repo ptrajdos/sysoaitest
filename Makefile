@@ -10,10 +10,13 @@ PYTHON=python
 PIP=pip
 ASDF_BIN := $(ASDF_DIR)/bin/asdf
 
-CLGRIND_REPO := https://github.com/jrprice/Oclgrind.git
+OCLGRIND_REPO := https://github.com/jrprice/Oclgrind.git
 OCLGRIND_DIR := Oclgrind
-LLVM_ROOT := /usr/lib/llvm-21
-
+CLANG_VERSION=20
+LLVM_ROOT := /usr/lib/llvm-${CLANG_VERSION}
+CLANG_ROOT := "/usr/lib/clang/${CLANG_VERSION}"
+CC=clang-${CLANG_VERSION}
+CXX=clang++-${CLANG_VERSION}
 
 .PHONY: all
 
@@ -111,11 +114,16 @@ oclgrind: install_packages
 	@if [ ! -d "$(OCLGRIND_DIR)" ]; then \
 		git clone $(OCLGRIND_REPO); \
 	fi
+	cd Oclgrind && \
+	if ! grep -q "exepath\[len\] = '\\0';" src/runtime/oclgrind.cpp; then \
+		patch -p1 < ../oclgrind_readlink_fix.patch; \
+	fi
 	mkdir -p $(OCLGRIND_DIR)/build
 	cd $(OCLGRIND_DIR)/build && \
-	cmake .. \
+	CC=${CC} CXX=${CXX} cmake .. \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DLLVM_DIR=$(LLVM_ROOT)/cmake \
-		-DCLANG_ROOT=$(LLVM_ROOT)
-	$(MAKE) -C $(OCLGRIND_DIR)/build -j $(shell nproc)
+		-DCLANG_ROOT=$(CLANG_ROOT)
+	$(MAKE) VERBOSE=1 -C $(OCLGRIND_DIR)/build -j $(shell nproc)
 	$(MAKE) -C $(OCLGRIND_DIR)/build test
-	sudo $(MAKE) -C $(OCLGRIND_DIR)/build install
+	sudo $(MAKE)  -C $(OCLGRIND_DIR)/build install
