@@ -9,6 +9,10 @@ ASDF=asdf
 PYTHON=python
 PIP=pip
 ASDF_BIN := $(ASDF_DIR)/bin/asdf
+VENV_NAME=sysoai_venv
+VENV_DIR=${HOME}/${VENV_NAME}
+VENV_PYTHON=${VENV_DIR}/bin/python
+VENV_PIP=${VENV_DIR}/bin/pip
 
 OCLGRIND_REPO := https://github.com/jrprice/Oclgrind.git
 OCLGRIND_DIR := Oclgrind
@@ -31,62 +35,62 @@ install: asdf_install_python python_install_packages oclgrind-icd
 
 
 numpy:
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/numpyT.py"
+	${VENV_PYTHON} ${CODEDIR}/numpyT.py
 sklearn: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/sklearnT.py"
+	${VENV_PYTHON} ${CODEDIR}/sklearnT.py
 
 matplotlib: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/matplotlibT.py"
+	${VENV_PYTHON} ${CODEDIR}/matplotlibT.py
 
 keras: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/kerasT.py"
+	${VENV_PYTHON} ${CODEDIR}/kerasT.py
 
 cython: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && cd ${CODEDIR} && ${PYTHON} ./cythonSumT.py"
+	cd ${CODEDIR} && ${VENV_PYTHON} ./cythonSumT.py
 
 pyopencl: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/pyopenclT.py"
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/pyopencl2T.py"
+	${VENV_PYTHON} ${CODEDIR}/pyopenclT.py
+	${VENV_PYTHON} ${CODEDIR}/pyopencl2T.py
 
 mpi: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${MPIEXEC}	${PYTHON} ${CODEDIR}/mpiT.py"
+	${MPIEXEC} ${VENV_PYTHON} ${CODEDIR}/mpiT.py
 
 threads: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/threadsT.py"
+	${VENV_PYTHON} ${CODEDIR}/threadsT.py
 
 joblib: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/joblibT.py"
+	${VENV_PYTHON} ${CODEDIR}/joblibT.py
 
 ray: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/rayT.py"
+	${VENV_PYTHON} ${CODEDIR}/rayT.py
 
 dask: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/daskT.py"
+	${VENV_PYTHON} ${CODEDIR}/daskT.py
 
 torch: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/torchT.py"
+	${VENV_PYTHON} ${CODEDIR}/torchT.py
 
 pyopenclimage: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && cd ${CODEDIR} && ${PYTHON} ./imageFillIntT.py "
+	cd ${CODEDIR} && ${VENV_PYTHON} ./imageFillIntT.py
 
 spark: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/sparkT.py"
+	${VENV_PYTHON} ${CODEDIR}/sparkT.py
 
 tqdm: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/tqdmT.py"
+	${VENV_PYTHON} ${CODEDIR}/tqdmT.py
 
 skimage: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/skimageT.py"
+	${VENV_PYTHON} ${CODEDIR}/skimageT.py
 
 opencv: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && cd ${CODEDIR} && ${PYTHON} ./opencvT.py"
+	cd ${CODEDIR} && ${VENV_PYTHON} ./opencvT.py
 
 tensorflow: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/tensorflowT.py"
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/tensorflow2T.py"
+	${VENV_PYTHON} ${CODEDIR}/tensorflowT.py
+	${VENV_PYTHON} ${CODEDIR}/tensorflow2T.py
 
 jax: 
-	bash -c ". $(ASDF_DIR)/asdf.sh && ${PYTHON} ${CODEDIR}/jaxT.py"
+	${VENV_PYTHON} ${CODEDIR}/jaxT.py
 
 git:
 	apt install -y git
@@ -118,9 +122,12 @@ asdf_install_python: asdf_plugins
 	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  install python 3.13.14t || true'
 	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN)  global python 3.13.14 || true'
 
-python_install_packages: asdf_install_python
-	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install --upgrade pip "
-	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install.log "
+create_venv: asdf_install_python
+	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m venv ${VENV_DIR}"
+
+python_install_packages: create_venv
+	${VENV_PIP} install --upgrade pip
+	${VENV_PIP} install -r ${ROOTDIR}/requirements_general.txt --log ${ROOTDIR}/pip_install.log
 
 python_install_standalone:
 	bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m $(PIP) install --upgrade pip "
