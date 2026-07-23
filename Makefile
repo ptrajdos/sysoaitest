@@ -26,7 +26,7 @@ VSCODIUM_REPO := /etc/apt/sources.list.d/vscodium.list
 
 .PHONY: all install tests \
 	numpy sklearn matplotlib keras cython pyopencl mpi threads joblib ray dask \
-	torch pyopenclimage spark tqdm skimage opencv tensorflow jax \
+	torch pyopenclimage spark tqdm skimage opencv tensorflow jax numba\
 	git asdf_plugins update_packages install_packages \
 	asdf_install_python create_venv python_install_packages \
 	python_install_standalone python_install_standalone2 \
@@ -34,7 +34,7 @@ VSCODIUM_REPO := /etc/apt/sources.list.d/vscodium.list
 
 all: install tests
 
-tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib ray dask pyopenclimage spark tqdm skimage opencv torch jax
+tests: numpy sklearn matplotlib keras cython pyopencl mpi threads joblib ray dask pyopenclimage spark tqdm skimage opencv torch jax numba
 
 install: asdf_install_python python_install_packages oclgrind-icd vscodium
 
@@ -52,6 +52,9 @@ keras:
 
 cython:
 	cd $(CODEDIR) && $(VENV_PYTHON) ./cythonSumT.py
+
+numba:
+	cd $(CODEDIR) && $(VENV_PYTHON) ./numbaT.py
 
 pyopencl:
 	$(VENV_PYTHON) $(CODEDIR)/pyopenclT.py
