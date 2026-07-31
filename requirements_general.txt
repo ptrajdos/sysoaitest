@@ -23,7 +23,7 @@ typing_extensions>=4.5.0
 urllib3>=1.26.16
 matplotlib
 tqdm
-ray
+ray[default]
 dask
 distributed
 torch
