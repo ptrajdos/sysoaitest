@@ -26,5 +26,6 @@ tqdm
 ray[default]
 dask
 distributed
+bokeh>=3.1.0
 torch
 jax
