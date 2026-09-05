@@ -223,3 +223,9 @@ vscodium:
 	else \
 		echo "VSCodium already installed."; \
 	fi
+
+clean_venv:
+	rm -rf ${VENV_DIR}
+
+clean: clean_venv
+	@echo "Cleaning"
