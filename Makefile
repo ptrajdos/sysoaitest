@@ -4,7 +4,7 @@ ROOTDIR := $(realpath $(dir $(firstword $(MAKEFILE_LIST))))
 CODEDIR := $(ROOTDIR)/code
 ASDF_DIR := $(HOME)/.asdf
 ASDF_BIN := $(ASDF_DIR)/bin/asdf
-PACKAGES_FILE := $(ROOTDIR)/mint_packages.txt
+PACKAGES_DIR := $(ROOTDIR)/packages
 PYTHON := python
 PIP := pip
 
@@ -123,7 +123,23 @@ update_packages:
 	sudo apt upgrade -y
 
 install_packages: update_packages
-	sudo xargs -a $(PACKAGES_FILE) apt install -y
+	@set -e; \
+	. /etc/os-release; \
+	PACKAGES_FILE="packages/$$ID-$$VERSION_ID.txt"; \
+	test -f "$$PACKAGES_FILE" || { \
+		echo "Unsupported system: $$ID $$VERSION_ID"; \
+		exit 1; \
+	}; \
+	if command -v apt >/dev/null 2>&1; then \
+		sudo xargs -a "$$PACKAGES_FILE" apt install -y; \
+	elif command -v dnf >/dev/null 2>&1; then \
+		sudo xargs -a "$$PACKAGES_FILE" dnf install -y; \
+	elif command -v yum >/dev/null 2>&1; then \
+		sudo xargs -a "$$PACKAGES_FILE" yum install -y; \
+	else \
+		echo "No supported package manager found"; \
+		exit 1; \
+	fi
 
 asdf_install_python: asdf_plugins
 	bash -c '. $(ASDF_DIR)/asdf.sh && $(ASDF_BIN) install python 3.13.14 || true'
