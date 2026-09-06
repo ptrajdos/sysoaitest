@@ -30,3 +30,4 @@ bokeh>=3.1.0
 torch
 jax
 numba
+pytest
