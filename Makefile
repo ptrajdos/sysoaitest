@@ -149,7 +149,7 @@ asdf_install_python: asdf_plugins
 create_venv: asdf_install_python
 	@if [ ! -d "$(VENV_DIR)" ]; then \
 		echo "Creating venv at $(VENV_DIR)..."; \
-		bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m venv $(VENV_DIR)"; \
+		bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m venv --upgrade-deps $(VENV_DIR)"; \
 	else \
 		echo "Venv already exists at $(VENV_DIR)"; \
 	fi
