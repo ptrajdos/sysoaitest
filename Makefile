@@ -148,12 +148,19 @@ asdf_install_python: asdf_plugins
 
 create_venv: asdf_install_python
 	@if [ ! -d "$(VENV_DIR)" ]; then \
-		echo "Creating venv at $(VENV_DIR)..."; \
-		bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m venv --upgrade-deps $(VENV_DIR)"; \
-	else \
-		echo "Venv already exists at $(VENV_DIR)"; \
+			echo "Creating venv at $(VENV_DIR)..."; \
+			bash -c ". $(ASDF_DIR)/asdf.sh && $(PYTHON) -m venv --upgrade-deps $(VENV_DIR)"; \
+		else \
+			echo "Venv already exists at $(VENV_DIR)"; \
 	fi
 
+create_venv_only:
+	@if [ ! -d "$(VENV_DIR)" ]; then \
+			echo "Creating venv at $(VENV_DIR)..."; \
+			$(PYTHON) -m venv --upgrade-deps $(VENV_DIR); \
+		else \
+			echo "Venv already exists at $(VENV_DIR)"; \
+	fi
 python_install_packages: create_venv
 	$(VENV_PIP) install --upgrade pip
 	$(VENV_PIP) install -r $(ROOTDIR)/requirements_general.txt --log $(ROOTDIR)/pip_install.log
